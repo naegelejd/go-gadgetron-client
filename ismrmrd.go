@@ -14,43 +14,43 @@ const (
 )
 
 type EncodingCounters struct {
-    kspace_encode_step_1 uint16
-    kspace_encode_step_2 uint16
-    average uint16
-    slice uint16
-    contrast uint16
-    phase uint16
-    repetition uint16
-    set uint16
-    segment uint16
-    user [ISMRMRD_USER_INTS]uint16
+    Kspace_encode_step_1 uint16
+    Kspace_encode_step_2 uint16
+    Average uint16
+    Slice uint16
+    Contrast uint16
+    Phase uint16
+    Repetition uint16
+    Set uint16
+    Segment uint16
+    User [ISMRMRD_USER_INTS]uint16
 }
 
 type AcquisitionHeader struct {
-    version uint16
-    flags uint64
-    measurement_uid uint32
-    scan_counter uint32
-    acquisition_time_stamp uint32
-    physiology_time_stamp [ISMRMRD_PHYS_STAMPS]uint32
-    number_of_samples uint16
-    available_channels uint16
-    active_channels uint16
-    channel_mask [ISMRMRD_CHANNEL_MASKS]uint64
-    discard_pre uint16
-    discard_post uint16
-    center_sample uint16
-    encoding_space_ref uint16
-    trajectory_dimensions uint16
-    sample_time_us float32
-    position [ISMRMRD_POSITION_LENGTH]float32
-    read_dir [ISMRMRD_DIRECTION_LENGTH]float32
-    phase_dir [ISMRMRD_DIRECTION_LENGTH]float32
-    slice_dir [ISMRMRD_DIRECTION_LENGTH]float32
-    patientable_position [ISMRMRD_POSITION_LENGTH]float32
-    idx EncodingCounters
-    user_int [ISMRMRD_USER_INTS]int32
-    user_float32 [ISMRMRD_USER_FLOATS]float32
+    Version uint16
+    Flags uint64
+    Measurement_uid uint32
+    Scan_counter uint32
+    Acquisition_time_stamp uint32
+    Physiology_time_stamp [ISMRMRD_PHYS_STAMPS]uint32
+    Number_of_samples uint16
+    Available_channels uint16
+    Active_channels uint16
+    Channel_mask [ISMRMRD_CHANNEL_MASKS]uint64
+    Discard_pre uint16
+    Discard_post uint16
+    Center_sample uint16
+    Encoding_space_ref uint16
+    Trajectory_dimensions uint16
+    Sample_time_us float32
+    Position [ISMRMRD_POSITION_LENGTH]float32
+    Read_dir [ISMRMRD_DIRECTION_LENGTH]float32
+    Phase_dir [ISMRMRD_DIRECTION_LENGTH]float32
+    Slice_dir [ISMRMRD_DIRECTION_LENGTH]float32
+    Patientable_position [ISMRMRD_POSITION_LENGTH]float32
+    Idx EncodingCounters
+    User_int [ISMRMRD_USER_INTS]int32
+    User_float32 [ISMRMRD_USER_FLOATS]float32
 }
 
 type Acquisition struct {

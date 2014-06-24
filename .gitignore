@@ -1,3 +1,4 @@
 *.swp
-goclient
+*.png
+go-gtclient
 data.go

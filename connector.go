@@ -1,14 +1,10 @@
 package main
 
 import (
-    "os"
     "fmt"
     "net"
     "log"
     "bytes"
-    "image"
-    "image/png"
-    "image/color"
     "encoding/binary"
 )
 
@@ -23,10 +19,12 @@ const (
 
 type GadgetronConnector struct {
     conn net.Conn
-    /* readers map[uint16]GadgetMessageReader */
+    readers map[uint16]GadgetMessageReader
 }
 
-func (c *GadgetronConnector) Open(host string, port int) {
+func newGadgetronConnector(host string, port int) *GadgetronConnector {
+    c := new(GadgetronConnector)
+
     addr := fmt.Sprintf("%s:%d", host, port)
     tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
     if err != nil {
@@ -39,6 +37,10 @@ func (c *GadgetronConnector) Open(host string, port int) {
     }
 
     c.conn = netconn
+
+    c.readers = make(map[uint16]GadgetMessageReader, 8)
+
+    return c
 }
 
 func (c *GadgetronConnector) Close() {
@@ -111,56 +113,28 @@ func (c *GadgetronConnector) sendIsmrmrdAcquisition(a *Acquisition) {
     }
 }
 
+func (g *GadgetronConnector) registerReader(msg uint16, reader GadgetMessageReader) {
+    g.readers[msg] = reader
+}
+
 func (g *GadgetronConnector) readImages() {
-    for i := 0; ; i++ {
+    for {
         var msg uint16
         binary.Read(g.conn, binary.LittleEndian, &msg)
 
         if msg == GADGET_MESSAGE_CLOSE {
             log.Println("Received GADGET_MESSAGE_CLOSE")
-            break
-        } else if msg != GADGET_MESSAGE_ISMRMRD_IMAGE_REAL_FLOAT {
-            log.Printf("Read Gadget Message (%d), expecting GADGET_MESSAGE_IMAGE_REAL_FLOAT", msg)
-            break
-        }
-
-        var head ImageHeader
-        err := binary.Read(g.conn, binary.LittleEndian, &head)
-        if err != nil {
-            log.Fatal("Failed to read ImageHeader")
-        }
-        //fmt.Printf("%+v\n", head)
-
-        nelem := head.Matrix_size[0] * head.Matrix_size[1] * head.Matrix_size[2]
-        if (head.Channels > 1) {
-            nelem *= head.Channels
-        }
-
-        data := make([]float32, nelem)
-        err = binary.Read(g.conn, binary.LittleEndian, &data)
-        if err != nil {
-            log.Fatal("Failed to read image data")
-        }
-
-        img := image.NewRGBA(image.Rect(0, 0, int(head.Matrix_size[0]), int(head.Matrix_size[1])))
-        b := img.Bounds()
-        for y := b.Min.Y; y < b.Max.Y; y++ {
-            for x := b.Min.X; x < b.Max.X; x++ {
-                v := data[(y * b.Max.X) + x]
-                // Gadgetron AutoScale Gadget uses 2048 as maximum
-                s := uint8(v / 2048 * 256)
-                g := color.RGBA {s, s, s, 255}
-                img.Set(x, y, g)
+            return
+        } else {
+            reader := g.readers[msg]
+            if reader != nil {
+                err := reader.Read(g.conn)
+                if err != nil {
+                    log.Println(err)
+                }
+            } else {
+                log.Printf("No reader registered for message (%d)", msg)
             }
         }
-
-        fname := fmt.Sprintf("%d.png", i)
-        f, err := os.Create(fname)
-        defer f.Close()
-        if err != nil {
-            log.Fatal(err)
-        }
-
-        png.Encode(f, img)
     }
 }
