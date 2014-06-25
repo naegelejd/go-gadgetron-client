@@ -71,17 +71,18 @@ const xml_config = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 
 """)
     f.write('var traj = make([]float32, 0)\n\n')
+    f.write('var data [][]float32 = makeData()\n')
 
-    f.write('var data [][]float32 = [][]float32 {\n')
-    for y, line in enumerate(K):
-        s = '[]float32 { '
-        for x, sample in enumerate(line):
-            s += '%f, %f, ' % (sample.real, sample.imag)
-            if x % 7 == 0:
-                f.write(s)
-                f.write('\n')
-                s = ''
-        s = s[:-2]
-        s += '},\n'
-        f.write(s)
-    f.write('}\n')
+    # f.write('var data [][]float32 = [][]float32 {\n')
+    # for y, line in enumerate(K):
+    #     s = '[]float32 { '
+    #     for x, sample in enumerate(line):
+    #         s += '%f, %f, ' % (sample.real, sample.imag)
+    #         if x % 7 == 0:
+    #             f.write(s)
+    #             f.write('\n')
+    #             s = ''
+    #     s = s[:-2]
+    #     s += '},\n'
+    #     f.write(s)
+    # f.write('}\n')
