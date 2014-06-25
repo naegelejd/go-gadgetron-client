@@ -1,24 +1,5 @@
-import numpy as np
-import matplotlib.pyplot as plt
+package main
 
-# Generates a white rectangle (ismrmrd test_create_dataset.cpp)
-nX, nY = 256, 128
-rho = np.zeros((nY, nX))
-
-x0, x1 = nX / 4, 3 * nX / 4
-y0, y1 = nY / 8, 7 * nY / 8
-
-rho[y0:y1, x0:x1] = 1
-
-K = np.fft.fftshift(np.fft.fft2(np.fft.fftshift(rho)))
-
-# plt.imshow(rho)
-# plt.show()
-# print(K.shape)
-
-with open('data.go', 'w') as f:
-    f.write('package main\n\n')
-    f.write("""
 const xml_config = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <ismrmrdHeader xmlns="http://www.ismrm.org/ISMRMRD" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ismrm.org/ISMRMRD ismrmrd.xsd">
 
@@ -68,21 +49,3 @@ const xml_config = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 
 </ismrmrdHeader>
 `
-
-""")
-    f.write('var traj = make([]float32, 0)\n\n')
-    f.write('var data [][]float32 = makeData()\n')
-
-    # f.write('var data [][]float32 = [][]float32 {\n')
-    # for y, line in enumerate(K):
-    #     s = '[]float32 { '
-    #     for x, sample in enumerate(line):
-    #         s += '%f, %f, ' % (sample.real, sample.imag)
-    #         if x % 7 == 0:
-    #             f.write(s)
-    #             f.write('\n')
-    #             s = ''
-    #     s = s[:-2]
-    #     s += '},\n'
-    #     f.write(s)
-    # f.write('}\n')
