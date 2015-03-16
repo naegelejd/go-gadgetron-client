@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
-	ismrmrd "github.com/naegelejd/go-ismrmrd"
+	"github.com/naegelejd/go-ismrmrd"
 	"image"
 	"image/color"
 	"image/png"

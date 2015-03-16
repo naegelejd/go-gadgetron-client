@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	ismrmrd "github.com/naegelejd/go-ismrmrd"
+	"github.com/naegelejd/go-ismrmrd"
 	"log"
 	"net"
 )

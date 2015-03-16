@@ -2,14 +2,15 @@ package main
 
 import (
 	"flag"
-	ismrmrd "github.com/naegelejd/go-ismrmrd"
+	"github.com/naegelejd/go-ismrmrd"
 	"log"
 )
 
 func main() {
-	var host string
+	var host, config string
 	var port int
 	flag.StringVar(&host, "host", "", "hostname")
+	flag.StringVar(&config, "config", "default.xml", "XML config")
 	flag.IntVar(&port, "port", 9002, "port number")
 	flag.Parse()
 
@@ -18,7 +19,7 @@ func main() {
 
 	conn.registerReader(GADGET_MESSAGE_ISMRMRD_IMAGE_REAL_FLOAT, &IsmrmrdImagePNGReader{})
 
-	conn.sendGadgetronConfigurationFile("default.xml")
+	conn.sendGadgetronConfigurationFile(config)
 	conn.sendGadgetronParameters(xml_config)
 
 	head := ismrmrd.AcquisitionHeader{}
@@ -31,7 +32,7 @@ func main() {
 	//log.Printf("%+v\n", head)
 
 	var traj = make([]float32, 0)
-	var data [][]float32 = makeKSpaceData()
+	var data [][]complex64 = makeKSpaceData()
 
 	// 5 slices (corresponding to slice limits in xml_config)
 	for s := 0; s < 5; s++ {
@@ -42,7 +43,7 @@ func main() {
 				head.Flags = ismrmrd.ACQ_LAST_IN_SLICE
 			}
 
-			head.Idx.KspaceEncodeStep1 = uint16(i)
+			head.Idx.KSpaceEncodeStep1 = uint16(i)
 			head.Idx.Slice = uint16(s)
 			acq := &ismrmrd.Acquisition{head, traj, line}
 			conn.sendIsmrmrdAcquisition(acq)
@@ -50,7 +51,6 @@ func main() {
 	}
 
 	conn.sendCloseMessage()
-
 	conn.readImages()
 
 	log.Println("Finished!")

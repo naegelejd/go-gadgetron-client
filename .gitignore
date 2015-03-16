@@ -1,4 +1,3 @@
 *.swp
 *.png
-go-gtclient
-data.go
+go-gadgetron-client

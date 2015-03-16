@@ -10,7 +10,7 @@ import (
 	"os"
 )
 
-func makeKSpaceData() [][]float32 {
+func makeKSpaceData() [][]complex64 {
 	nX, nY := 256, 128
 	square := make([][]float64, nY)
 	for y := 0; y < nY; y++ {
@@ -24,21 +24,20 @@ func makeKSpaceData() [][]float32 {
 		}
 	}
 
-	/* saveFloat64Image(square, "square.png") */
+	saveFloat64Image(square, "square.png")
 
 	squarec := dsputils.ToComplex2(square)
 
-	/* shift := fftshift2(squarec) */
-	/* saveCmplx128Image(shift, "shifted.png") */
+	shift := fftshift2(squarec)
+	saveCmplx128Image(shift, "shifted.png")
 
 	fft_square := fftshift2(fft.FFT2(fftshift2(squarec)))
 
-	data := make([][]float32, nY)
+	data := make([][]complex64, nY)
 	for a := 0; a < nY; a++ {
-		data[a] = make([]float32, 2*nX)
+		data[a] = make([]complex64, nX)
 		for b := 0; b < nX; b++ {
-			data[a][b*2] = float32(real(fft_square[a][b]))
-			data[a][b*2+1] = float32(imag(fft_square[a][b]))
+			data[a][b] = complex64(fft_square[a][b])
 		}
 	}
 
